@@ -1,2 +1,2 @@
 # OSCP
-Resources related to the OSCP study and certification.
+Resources related to OSCP study and certification.
