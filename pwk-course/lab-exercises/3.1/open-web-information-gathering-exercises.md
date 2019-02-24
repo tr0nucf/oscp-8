@@ -1,4 +1,4 @@
-# Open Web Information Gathering
+# Open Web Information Gathering Exercises
 
 > 1. Choose an organization and use Google to gather as much information as
 possible about it
