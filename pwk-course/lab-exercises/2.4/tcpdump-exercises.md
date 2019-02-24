@@ -1,7 +1,7 @@
 # tcmpdump Exercises
 
 > 1. Use tcpdump to recreate the wireshark exercise of capturing traffic on port 110.
-2. Use the -X flag to view the content of the packet. If data is truncated, investigate
+> 2. Use the -X flag to view the content of the packet. If data is truncated, investigate
 how the -s flag might help.
 
 ```bash

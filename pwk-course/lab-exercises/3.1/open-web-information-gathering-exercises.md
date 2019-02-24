@@ -2,9 +2,9 @@
 
 > 1. Choose an organization and use Google to gather as much information as
 possible about it
-2. Use the Google filetype search operator and look for interesting documents from
+> 2. Use the Google filetype search operator and look for interesting documents from
 the target organization
-3. Re-do the exercise on your company’s domain. Can you find any data leakage
+> 3. Re-do the exercise on your company’s domain. Can you find any data leakage
 you were not aware of?
 
 The domain chosen for this exercise is `cisco.com`.
