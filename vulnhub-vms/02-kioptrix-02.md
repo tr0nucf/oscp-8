@@ -1,5 +1,19 @@
 # Kioptrix Level 2
 
+### Contents
+<!-- TOC -->
+- [Footprinting](#footprinting)
+- [Reconnaisance](#reconnaisance)
+- [ipp](#ipp)
+- [MYSQL](#mysql)
+- [HTTP](#http)
+  - [Nikto Scan](#nikto-scan)
+  - [SQL Injection Attack](#sql-injection-attack)
+  - [Command Injection](#command-injection)
+  - [Privilege Escalation](#privilege-escalation)
+
+<!-- /TOC -->
+
 Our target network is `10.0.2.0/24`.
 
 # Footprinting
@@ -51,7 +65,7 @@ OS details: Linux 2.6.9 - 2.6.30
 Now we proceed by examining each of the services on the machine.
 Starting with the most interesting.
 
-## ipp
+# ipp
 
 IPP (Internet Printing Protocol) is a TCP/IP based client-server protocol.
 IPP enables printing over any LAN or WAN supporting TCP/IP.

@@ -1,5 +1,17 @@
 # Kioptrix Level 1
 
+### Contents
+<!-- TOC -->
+- [Footprinting](#footprinting)
+- [Reconnaisance](#reconnaisance)
+- [SSH](#ssh)
+- [HTTP](#http)
+- [RPC & filenet](#rpc--filenet)
+- [NetBIOS](#netbios)
+  - [Metasploit Exploitation](#metasploit-exploitation)
+
+<!-- /TOC -->
+
 # Footprinting
 Find the IP address of the target host via:
 
@@ -25,7 +37,7 @@ MAC Address: 08:00:27:BC:A2:66 (Oracle VirtualBox virtual NIC)
 ```
 Now we proceed by examining each of the services on the machine.
 
-## SSH
+# SSH
 ```bash
 nmap -A 10.0.0.3 -p 22
 ```
