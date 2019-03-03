@@ -1,4 +1,4 @@
-# Kioptix Level 1
+# Kioptrix Level 1
 
 # Footprinting
 Find the IP address of the target host via:
