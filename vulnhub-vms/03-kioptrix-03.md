@@ -194,14 +194,14 @@ localhost	root	*47FB3B1E573D80F44CD198DC65DE7764795F948E
 ```
 
 ```SQL
-USE DATABASE galleryL;
+USE DATABASE gallery;
 SELECT * FROM dev_accounts;
 ```
 
 ```
-id	username	  password
-1	  dreg	      0d3eccfb887aabd50f243b3f155c0f85
-2	  loneferret	5badcaf789d3d1d09794d8f021f40f0e
+id  username    password
+1	  dreg        0d3eccfb887aabd50f243b3f155c0f85
+2   loneferret  5badcaf789d3d1d09794d8f021f40f0e
 ```
 
 **Now we have some account hashes to crack.**
