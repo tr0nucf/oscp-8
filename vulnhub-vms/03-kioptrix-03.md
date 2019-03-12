@@ -7,7 +7,7 @@
   - [HTTP](#http)
   - [phpMyAdmin](#phpmyadmin)
   - [LotusCMS](#lotuscms)
-- [Initial Shell & Enumeration](#initial-shell--enumeration)
+- [Initial Shell](#initial-shell)
 - [Privilege Escalation I](#privilege-escalation-i)
   - [Cracking Hashes](#cracking-hashes)
 - [Privilege Escalation II](#privilege-escalation-ii)
@@ -143,7 +143,7 @@ set URI /index.php?system=Admin
 exploit
 ```
 
-# Initial Shell & Enumeration
+# Initial Shell
 
 ```
 meterpreter > getuid
