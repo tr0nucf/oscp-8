@@ -1,4 +1,4 @@
-# Kioptrix Level 3
+# Kioptrix Level 4
 
 ### Contents
 <!-- TOC -->
@@ -9,6 +9,8 @@
   - [Dirbuster Results](#dirbuster-results)
   - [SQL injection](#sql-injection)
 - [Initial Shell](#initial-shell)
+- [Privilege Escalation](#privilege-escalation)
+  - [Alternative Routes](#alternative-routes)
 
 <!-- /TOC -->
 
@@ -375,3 +377,47 @@ Type '?' or 'help' to get the list of allowed commands
 john:~$ ?
 cd  clear  echo  exit  help  ll  lpath  ls
 ```
+
+Using this guide [this guide][464d8d1a] we try to escape the shell.
+
+However, we are unable to do any of the following:
+* Run binaries other than the commands defined
+* Explore directories other than those
+* Use redirection or pipes
+* Use other languages
+
+Based upon the output however, it appears that this shell is based from lshell.
+
+[This exploit](https://www.exploit-db.com/exploits/39632) is available to use and works successfully. However, a simpler way to gain a full shell was:
+
+```bash
+echo os.system('/bin/bash')
+```
+
+# Privilege Escalation
+
+No simple way could be found the elevate `john` or `robert`.
+
+Analysis of `/var/www` files found that `mysql` could be accessed as `root` without a password.
+
+`mysq -u root -p` gives access.
+
+[This MYSQL UDF Exploit](https://www.exploit-db.com/exploits/1518) allows for execution of commands as root.
+
+There are a range of ways to gain root at this point, but what we did was:
+
+1. `chmod 777 /etc/sudoers`
+2. Add `john` with full privileges
+3. `chmod 4400 /etc/sudoers`
+
+`sudo su -` as `john` gives **root**.
+
+##  Alternative Routes
+
+* `usermod -a -G admin john`
+* Dirty COW
+* Add an SSH key as root to `/root/.ssh/authorized_keys`
+
+
+
+  [464d8d1a]: https://fireshellsecurity.team/restricted-linux-shell-escaping-techniques/ "Linux Shell Escapes"
